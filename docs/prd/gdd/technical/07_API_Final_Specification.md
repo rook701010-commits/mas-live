@@ -228,6 +228,46 @@ Response
 
 POST
 
+/session/next
+
+目的（DL-008にて追加）
+
+
+
+次の問題へ進める。current\_question\_noをインクリメントする。
+
+
+
+Request
+
+
+
+{
+
+&#x20;"session\_id":"abc123"
+
+}
+
+
+
+Response
+
+
+
+{
+
+&#x20;"success":true,
+
+&#x20;"data":{
+
+&#x20;  "question\_no":6
+
+&#x20;}
+
+}
+
+POST
+
 /session/end
 
 目的

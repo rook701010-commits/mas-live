@@ -1,11 +1,12 @@
 // MAS LIVE Core API - Cloudflare Workers Entry Point
 // docs/prd/gdd/technical/07_API_Final_Specification.md 準拠
-// Phase1: ルーティング骨格のみ。各handlerはPhase3で実装する。
 
+import type { Env } from "./types";
 import { failure, success } from "./utils/response";
 import {
   handleSessionCreate,
   handleSessionStart,
+  handleSessionNext,
   handleSessionCurrent,
   handleSessionEnd,
 } from "./routes/session";
@@ -27,13 +28,10 @@ import {
   handleAdminDashboard,
 } from "./routes/admin";
 
-export interface Env {
-  DB: D1Database;
-}
-
 const routes: Record<string, (req: Request, env: Env) => Promise<Response>> = {
   "POST /api/session/create": handleSessionCreate,
   "POST /api/session/start": handleSessionStart,
+  "POST /api/session/next": handleSessionNext,
   "GET /api/session/current": handleSessionCurrent,
   "POST /api/session/end": handleSessionEnd,
   "POST /api/player/join": handlePlayerJoin,
@@ -65,6 +63,13 @@ export default {
       return failure("NOT_FOUND", `No route for ${key}`, 404);
     }
 
-    return handler(request, env);
+    try {
+      return await handler(request, env);
+    } catch (err) {
+      console.error(err);
+      return failure("INTERNAL_ERROR", err instanceof Error ? err.message : "unknown error", 500);
+    }
   },
 };
+
+export type { Env };
