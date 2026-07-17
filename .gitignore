@@ -3,3 +3,5 @@ dist/
 *.timestamp-*.mjs
 .wrangler/
 .env
+*.tsbuildinfo
+apps/*/src/**/*.js

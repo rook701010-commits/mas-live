@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/api/client.ts","./src/components/answerpanel.tsx","./src/components/battleresult.tsx","./src/components/questiondisplay.tsx","./src/components/scorepanel.tsx","./src/components/sessioncontrol.tsx","./src/hooks/usebossanswer.ts","./src/hooks/usegamecontrol.ts","./src/pages/dashboardpage.tsx"],"version":"5.9.3"}
