@@ -1,3 +1,5 @@
+import type { Env } from "../types";
+
 // docs/prd/gdd/technical/07_API_Final_Specification.md - Boss API
 // POST /boss/answer, GET /boss/result
 // 空実装（Phase1: API疎通確認のみ。Phase3で本実装）

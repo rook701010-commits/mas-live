@@ -1,3 +1,5 @@
+import type { Env } from "../types";
+
 // docs/prd/gdd/technical/07_API_Final_Specification.md - Session API
 // POST /session/create, POST /session/start, GET /session/current, POST /session/end
 // 空実装（Phase1: API疎通確認のみ。Phase3で本実装）

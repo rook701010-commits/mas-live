@@ -5,4 +5,4 @@ compatibility_date = "2026-07-17"
 [[d1_databases]]
 binding = "DB"
 database_name = "mas-live-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "e889faba-567e-4f71-b9da-4b1a2b5cf55c"
