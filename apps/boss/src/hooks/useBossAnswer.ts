@@ -1,0 +1,42 @@
+import { useCallback, useEffect, useState } from "react";
+import { submitBossAnswer, getBossResult, BossResultResponse } from "../api/client";
+
+export function useBossAnswer(sessionId: string | null, questionId: string | null) {
+  const [answered, setAnswered] = useState<string | null>(null);
+  const [result, setResult] = useState<BossResultResponse | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAnswered(null);
+    setError(null);
+  }, [questionId]);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    getBossResult(sessionId).then((res) => {
+      if (res.success) setResult(res.data);
+    });
+  }, [sessionId, answered]);
+
+  const answer = useCallback(
+    async (choice: string) => {
+      if (!sessionId || !questionId) return;
+      setSubmitting(true);
+      const res = await submitBossAnswer(sessionId, questionId, choice);
+      setSubmitting(false);
+      if (!res.success) {
+        if (res.error.code === "DUPLICATE_ANSWER") {
+          setAnswered(choice);
+          return;
+        }
+        setError(res.error.message);
+        return;
+      }
+      setAnswered(choice);
+    },
+    [sessionId, questionId]
+  );
+
+  return { answer, answered, result, submitting, error };
+}
