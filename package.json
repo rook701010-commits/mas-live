@@ -1,0 +1,16 @@
+{
+  "name": "mas-live",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "workers"
+  ],
+  "scripts": {
+    "dev:player": "npm run dev --workspace=apps/player",
+    "dev:boss": "npm run dev --workspace=apps/boss",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:overlay": "npm run dev --workspace=apps/overlay",
+    "dev:workers": "npm run dev --workspace=workers"
+  }
+}
