@@ -2,7 +2,7 @@
 // docs/prd/gdd/technical/07_API_Final_Specification.md 準拠
 
 import type { Env } from "./types";
-import { failure, success } from "./utils/response";
+import { CORS_HEADERS, failure, success } from "./utils/response";
 import {
   handleSessionCreate,
   handleSessionStart,
@@ -53,6 +53,10 @@ const routes: Record<string, (req: Request, env: Env) => Promise<Response>> = {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
 
     if (url.pathname === "/api/health") {
       return success({ status: "ok" });

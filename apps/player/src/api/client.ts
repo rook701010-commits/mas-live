@@ -1,6 +1,8 @@
 // docs/prd/gdd/technical/07_API_Final_Specification.md 準拠のAPIクライアント
+// docs/prd/gdd/technical/prompts/decision-log/DL-013_Frontend_API_Base_URL.md
+// 開発時は/apiへのvite proxyを使用。本番はVITE_API_BASE_URLで実APIを指定する。
 
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 interface ApiSuccess<T> {
   success: true;
