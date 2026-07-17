@@ -64,6 +64,9 @@ export default function DashboardPage() {
     );
   }
 
+  const remainingSeconds = game.sessionState?.remaining_seconds ?? 0;
+  const isTimeUp = remainingSeconds <= 0;
+
   return (
     <div style={{ padding: 16, maxWidth: 560, margin: "0 auto" }}>
       <p style={{ fontSize: 12, color: "#888" }}>Session ID: {game.sessionId}</p>
@@ -73,15 +76,18 @@ export default function DashboardPage() {
           <QuestionDisplay
             questionNo={game.question.question_no}
             title={game.question.title}
-            remainingSeconds={game.sessionState?.remaining_seconds ?? 0}
+            remainingSeconds={remainingSeconds}
             participants={game.ranking?.participants ?? 0}
           />
           <AnswerPanel
             choices={game.question.choices}
             selected={bossAnswer.answered}
-            disabled={!!bossAnswer.answered || bossAnswer.submitting}
+            disabled={!!bossAnswer.answered || bossAnswer.submitting || isTimeUp}
             onSelect={bossAnswer.answer}
           />
+          {!bossAnswer.answered && isTimeUp && (
+            <p style={{ color: "#d32f2f", marginTop: 8 }}>時間切れです。次の問題へ進んでください。</p>
+          )}
         </>
       )}
 
@@ -91,6 +97,16 @@ export default function DashboardPage() {
         </button>
         <button style={styles.endButton} onClick={game.finish} disabled={game.busy}>
           配信終了
+        </button>
+        <button
+          style={styles.resetButton}
+          onClick={() => {
+            if (window.confirm("現在のセッションを離脱して開始画面に戻りますか？（配信自体は終了しません）")) {
+              game.reset();
+            }
+          }}
+        >
+          リセット
         </button>
       </div>
 
@@ -125,6 +141,14 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#333",
     background: "#e0e0e0",
     border: "none",
+    borderRadius: 8,
+  },
+  resetButton: {
+    padding: "14px 16px",
+    fontSize: 14,
+    color: "#d32f2f",
+    background: "#fff",
+    border: "1px solid #d32f2f",
     borderRadius: 8,
   },
 };

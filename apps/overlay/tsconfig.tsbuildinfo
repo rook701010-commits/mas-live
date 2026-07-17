@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/api/client.ts","./src/components/battlegauge.tsx","./src/components/bossinfo.tsx","./src/components/questionstatus.tsx","./src/components/rankinglist.tsx","./src/components/resultanimation.tsx","./src/components/scoredisplay.tsx","./src/hooks/useoverlaystate.ts"],"version":"5.9.3"}

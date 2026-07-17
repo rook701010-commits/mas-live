@@ -1,5 +1,6 @@
 import type { Env } from "../types";
 import { failure, success } from "../utils/response";
+import { computeRemainingSeconds } from "./session";
 
 // docs/prd/gdd/technical/07_API_Final_Specification.md - Ranking / Overlay API
 // docs/prd/gdd/22_Game_Balance_Design.md - MVPは全員平均を採用
@@ -34,10 +35,20 @@ async function getBossScore(env: Env, sessionId: string): Promise<{ score: numbe
   return { score: row?.score ?? 0, total: row?.total ?? 0 };
 }
 
+async function sessionExists(env: Env, sessionId: string): Promise<boolean> {
+  const row = await env.DB.prepare(`SELECT id FROM sessions WHERE id = ?`)
+    .bind(sessionId)
+    .first<{ id: string }>();
+  return !!row;
+}
+
 export async function handleRankingLive(req: Request, env: Env): Promise<Response> {
   const url = new URL(req.url);
   const sessionId = url.searchParams.get("session_id");
   if (!sessionId) return failure("INVALID_REQUEST", "session_id is required");
+  if (!(await sessionExists(env, sessionId))) {
+    return failure("SESSION_NOT_FOUND", "session not found", 404);
+  }
 
   const scores = await getParticipantScores(env, sessionId);
   const participants = scores.length;
@@ -60,6 +71,9 @@ export async function handleRankingFinal(req: Request, env: Env): Promise<Respon
   const url = new URL(req.url);
   const sessionId = url.searchParams.get("session_id");
   if (!sessionId) return failure("INVALID_REQUEST", "session_id is required");
+  if (!(await sessionExists(env, sessionId))) {
+    return failure("SESSION_NOT_FOUND", "session not found", 404);
+  }
 
   const boss = await getBossScore(env, sessionId);
   const scores = await getParticipantScores(env, sessionId);
@@ -101,6 +115,7 @@ export async function handleOverlayState(req: Request, env: Env): Promise<Respon
   const scores = await getParticipantScores(env, sessionId);
   const average =
     scores.length === 0 ? 0 : scores.reduce((sum, s) => sum + s.score, 0) / scores.length;
+  const remaining = await computeRemainingSeconds(env, sessionId, session.current_question_no);
 
   return success({
     boss: session.boss_name,
@@ -108,5 +123,7 @@ export async function handleOverlayState(req: Request, env: Env): Promise<Respon
     score: boss.score,
     average: Math.round(average * 10) / 10,
     event: eventForQuestionNo(session.current_question_no),
+    remaining_seconds: remaining,
+    participants: scores.length,
   });
 }

@@ -116,7 +116,7 @@ TIMEOUT
 
 
 
-時間切れ
+時間切れ（DL-012にてplayer/answer, boss/answerに実装。残り時間0秒以降の回答をTIMEOUT(409)で拒否）
 
 
 
@@ -538,9 +538,15 @@ Response
 
 &#x20;"average":15.2,
 
-&#x20;"event":"bonus"
+&#x20;"event":"bonus",
+
+&#x20;"remaining\_seconds":12,
+
+&#x20;"participants":42
 
 }
+
+（DL-009にてremaining\_seconds, participantsを追加。Phase6 OBS Overlay実装のため）
 
 Admin API
 
@@ -571,6 +577,16 @@ DELETE
 
 
 問題削除。
+
+
+
+GET
+
+/admin/question/list（DL-010にて追加）
+
+
+
+問題一覧取得。
 
 
 

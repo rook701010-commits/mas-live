@@ -25,6 +25,7 @@ import {
   handleAdminQuestionCreate,
   handleAdminQuestionUpdate,
   handleAdminQuestionDelete,
+  handleAdminQuestionList,
   handleAdminDashboard,
 } from "./routes/admin";
 
@@ -45,6 +46,7 @@ const routes: Record<string, (req: Request, env: Env) => Promise<Response>> = {
   "POST /api/admin/question/create": handleAdminQuestionCreate,
   "PUT /api/admin/question/update": handleAdminQuestionUpdate,
   "DELETE /api/admin/question/delete": handleAdminQuestionDelete,
+  "GET /api/admin/question/list": handleAdminQuestionList,
   "GET /api/admin/dashboard": handleAdminDashboard,
 };
 

@@ -9,8 +9,16 @@ export default function BattleResult({ result, onReset }: Props) {
   const bossWon = result.winner === "boss";
 
   return (
-    <div style={styles.wrap}>
-      <h2 style={styles.headline}>{bossWon ? "rook7 DEFENSE SUCCESS!!" : "RAID WIN!!"}</h2>
+    <div
+      style={{
+        ...styles.wrap,
+        background: bossWon ? "#e3f2fd" : "#ffebee",
+        borderRadius: 16,
+      }}
+    >
+      <h2 style={{ ...styles.headline, color: bossWon ? "#1565c0" : "#c62828" }}>
+        {bossWon ? "rook7 DEFENSE SUCCESS!!" : "RAID WIN!!"}
+      </h2>
       <p style={styles.sub}>{bossWon ? "防衛成功。連勝記録更新！" : "100人の勝利！次回はリベンジだ。"}</p>
 
       <div style={styles.scoreRow}>

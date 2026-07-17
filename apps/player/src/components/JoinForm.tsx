@@ -72,6 +72,8 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 8,
     border: "1px solid #ccc",
     minHeight: 44,
+    width: "100%",
+    boxSizing: "border-box",
   },
   button: {
     marginTop: 8,

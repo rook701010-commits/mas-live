@@ -38,6 +38,8 @@ export default function GamePage({ sessionId, participantToken, onFinished }: Pr
   }
 
   const hasAnswered = answeredQuestionId === question.question_id;
+  const remainingSeconds = sessionState?.remaining_seconds ?? 0;
+  const isTimeUp = remainingSeconds <= 0;
 
   return (
     <div style={{ padding: 16, maxWidth: 480, margin: "0 auto" }}>
@@ -45,15 +47,18 @@ export default function GamePage({ sessionId, participantToken, onFinished }: Pr
         questionNo={question.question_no}
         totalQuestions={TOTAL_QUESTIONS}
         title={question.title}
-        remainingSeconds={sessionState?.remaining_seconds ?? 0}
+        remainingSeconds={remainingSeconds}
       />
       <AnswerButton
         choices={question.choices}
-        disabled={hasAnswered || submitting}
+        disabled={hasAnswered || submitting || isTimeUp}
         selected={hasAnswered ? "回答済み" : null}
         onSelect={(choice) => answer(question.question_id, choice)}
       />
       {hasAnswered && <p style={{ textAlign: "center", marginTop: 12 }}>回答を送信しました。次の問題をお待ちください。</p>}
+      {!hasAnswered && isTimeUp && (
+        <p style={{ textAlign: "center", marginTop: 12, color: "#d32f2f" }}>時間切れです。次の問題をお待ちください。</p>
+      )}
       {answerError && <p style={{ color: "#d32f2f", textAlign: "center" }}>{answerError}</p>}
     </div>
   );

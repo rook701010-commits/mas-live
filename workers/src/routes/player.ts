@@ -1,9 +1,11 @@
 import type { Env } from "../types";
 import { failure, success } from "../utils/response";
+import { computeRemainingSeconds } from "./session";
 
 // docs/prd/gdd/technical/07_API_Final_Specification.md - Player API
 // docs/prd/gdd/technical/06_Database_Final_Schema.md - participants / answers
 // POST /player/join, GET /player/question, POST /player/answer
+// docs/prd/gdd/technical/prompts/decision-log/DL-012_Timeout_Enforcement.md - TIMEOUT判定
 
 interface SessionRow {
   id: string;
@@ -58,6 +60,9 @@ export async function handlePlayerQuestion(req: Request, env: Env): Promise<Resp
     .bind(sessionId)
     .first<SessionRow>();
   if (!session) return failure("SESSION_NOT_FOUND", "session not found", 404);
+  if (session.status === "finished") {
+    return failure("SESSION_FINISHED", "session already finished", 409);
+  }
 
   const sq = await env.DB.prepare(
     `SELECT q.id, q.question_text, q.choice_a, q.choice_b, q.choice_c, q.choice_d, q.correct_answer
@@ -89,6 +94,21 @@ export async function handlePlayerAnswer(req: Request, env: Env): Promise<Respon
 
   if (!body.session_id || !body.participant_token || !body.question_id || !body.answer) {
     return failure("INVALID_REQUEST", "session_id, participant_token, question_id, answer are required");
+  }
+
+  const session = await env.DB.prepare(
+    `SELECT status, current_question_no FROM sessions WHERE id = ?`
+  )
+    .bind(body.session_id)
+    .first<{ status: string; current_question_no: number }>();
+  if (!session) return failure("SESSION_NOT_FOUND", "session not found", 404);
+  if (session.status === "finished") {
+    return failure("SESSION_FINISHED", "session already finished", 409);
+  }
+
+  const remaining = await computeRemainingSeconds(env, body.session_id, session.current_question_no);
+  if (remaining <= 0) {
+    return failure("TIMEOUT", "time is up for this question", 409);
   }
 
   const participant = await env.DB.prepare(

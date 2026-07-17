@@ -30,6 +30,10 @@ export function useBossAnswer(sessionId: string | null, questionId: string | nul
           setAnswered(choice);
           return;
         }
+        if (res.error.code === "TIMEOUT") {
+          setError("時間切れです。次の問題へ進んでください。");
+          return;
+        }
         setError(res.error.message);
         return;
       }

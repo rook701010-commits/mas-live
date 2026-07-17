@@ -155,7 +155,8 @@ export async function handleSessionEnd(req: Request, env: Env): Promise<Response
 
 // 20秒固定のQuestion Flow（docs/prd/gdd/01_Core_Game_Loop.md準拠）を、
 // game_logsのQUESTION_START記録からの経過時間で近似する。
-async function computeRemainingSeconds(
+// ranking.ts（overlay/state）からも利用するためexportする。
+export async function computeRemainingSeconds(
   env: Env,
   sessionId: string,
   questionNo: number

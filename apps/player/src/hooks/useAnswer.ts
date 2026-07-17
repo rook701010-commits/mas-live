@@ -21,6 +21,10 @@ export function useAnswer(sessionId: string | null, participantToken: string | n
           setAnsweredQuestionId(questionId);
           return true;
         }
+        if (res.error.code === "TIMEOUT") {
+          setError("時間切れです。次の問題をお待ちください。");
+          return false;
+        }
         setError(res.error.message);
         return false;
       }
